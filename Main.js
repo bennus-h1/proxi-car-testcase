@@ -95,6 +95,20 @@ function onMenuAction(current, noAnim) {
     void selectmenu.offsetWidth;
 }
 
+async function sendData(data) {
+    if (keepReading) {{
+        if (!encoder || !writer) {
+            encoder = new TextEncoder();
+            writer = port.writable.getWriter();
+        }
+        // Encode the string into a Uint8Array and write it
+        writer.write(encoder.encode(String(spotValues[reserved]) + "n"));
+
+        writer.releaseLock();
+    }
+}
+}
+
 infobtn.addEventListener("click", () => {
     const clone = spots[selected].getElementsByClassName("list-statusinfo")[0].cloneNode(true)
     spots[selected].appendChild(clone)
@@ -121,16 +135,7 @@ reservebtn.addEventListener("click", () => {
     reserved = selected
 
     spotValues[reserved] = 2
-    if (keepReading) {{
-        if (!encoder || !writer) {
-            encoder = new TextEncoder();
-            writer = port.writable.getWriter();
-        }
-        // Encode the string into a Uint8Array and write it
-        await writer.write(encoder.encode(String(spotValues[reserved]) + "n"));
-
-        writer.releaseLock();
-    }
+    sendData(String(spotValues[reserved]) + "n")
     
     const reserveprop = spots[reserved].getElementsByClassName("list-propcontainer")[0].getElementsByClassName("reserved-prop")[0]
     reserveprop.style.position = "relative"
