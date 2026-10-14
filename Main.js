@@ -1,10 +1,23 @@
 const map = document.getElementById("map")
-const title = document.getElementsByClassName("title")[1]
+const title = document.getElementById("map-container").getElementsByClassName("title")[0]
 title.style.opacity = "1"
+
+const adminButton = document.getElementById("admin-button")
+const password = document.getElementById("password")
+const rText1 = document.getElementById("requester-text")
+const rText2 = document.getElementById("requester-text2")
+
+let isadministrator = false
 
 function setOpacity(element, increment) {
     element.style.opacity = String(parseFloat(element.style.opacity) + increment)
 }
+
+function isMobileDevice() {
+  return window.matchMedia("only screen and (max-width: 760px)").matches;
+}
+let onMobile = isMobileDevice()
+
 
 map.onmouseenter = function() {
     for (var i = 0; i < 5; i++) {
@@ -18,11 +31,29 @@ map.onmouseout = function() {
     }
 }
 
+adminButton.onclick = function() {
+    console.log(password.value)
+    if (password.value) {
+        console.log("eys")
+        if (password.value == "benadmin-freshfood") {
+            console.log("super")
+            isadministrator = true
+            rText1.textContent = "Hello! In order for us to properly track information, port reading should be allowed."
+            rText2.textContent = "Accept port reader? (Requires connected port!!)"
+        }
+    }
+    else {
+        password.style.opacity = "1"
+    }
+}
+
 let port
 let reader
 let buffer = ""
+let keepReading = false
 let increment = 0
-let spotValues = [1, 1, 1, 1, 1, 1, 1, 1]
+let spotValues = [0, 0, 0, 0, 0, 0, 0, 0]
+const spotCords = [53, 39, 56, 44, 59, 49, 62, 53]
 
 const colors = ["rgb(0, 240, 0)", "rgb(240, 0, 0)", "rgb(240, 100, 0)"]
 const values = ["Vacant", "Occupied", "Reserved"]
@@ -30,25 +61,137 @@ const spots = document.getElementsByClassName("list-element")
 
 const selectmenu = document.getElementById("select-menu")
 const reservebtn = document.getElementById("reserve-select")
+const trackbtn = document.getElementById("track-select")
+const infobtn = document.getElementById("info-select")
+
+const listprop = document.getElementsByClassName("list-property")[0]
+const mappin = document.getElementById("map-pin")
 let selected
 let reserved
+let tracked
+let infod
+
+let encoder
+let writer
+
+function onMenuAction(current, noAnim) {
+    selected = current
+    if (spotValues[selected] == 2 && spots[selected].style.border === "1px solid orange") {
+        reservebtn.textContent = "Stop Reserving"
+    }
+    else {
+        reservebtn.textContent = "Reserve"
+    }
+
+    selectmenu.style.position = "relative"
+    selectmenu.style.opacity = "1"
+    selectmenu.style.pointerEvents = "all"
+
+    selectmenu.style.order = String(spots[selected].style.order)
+    selectmenu.classList.remove("animate-selectmenu")
+
+    if (!noAnim) { selectmenu.classList.add("animate-selectmenu") }
+
+    void selectmenu.offsetWidth;
+}
+
+infobtn.addEventListener("click", () => {
+    const clone = spots[selected].getElementsByClassName("list-statusinfo")[0].cloneNode(true)
+    spots[selected].appendChild(clone)
+    clone.style.opacity = "1"
+    setTimeout(() => {
+        clone.remove()
+    }, 5000);
+})
+
+trackbtn.addEventListener("click", () => {
+    if (trackbtn.textContent == "Track") {
+        tracked = selected
+        console.log(tracked)
+        mappin.style.opacity = "1"
+        mappin.style.left = String(spotCords[2 * (tracked + 1) - 2] + "%")
+        mappin.style.bottom = String(spotCords[2 * (tracked + 1) - 1] + "%")
+    }
+})
 
 reservebtn.addEventListener("click", () => {
-    if (reserved) {spots[reserved].style.border = "0"}
+    if (reservebtn.textContent == "Reserve") {
+    if (spotValues[selected] != 0) {return} 
+    if (reserved != undefined) {spots[reserved].style.border = "0"}
     reserved = selected
-    spots[reserved].style.border = "1px solid blue"
+
+    spotValues[reserved] = 2
+    if (keepReading) {{
+        if (!encoder || !writer) {
+            encoder = new TextEncoder();
+            writer = port.writable.getWriter();
+        }
+        // Encode the string into a Uint8Array and write it
+        await writer.write(encoder.encode(String(spotValues[reserved]) + "n"));
+
+        writer.releaseLock();
+    }
+    
+    const reserveprop = spots[reserved].getElementsByClassName("list-propcontainer")[0].getElementsByClassName("reserved-prop")[0]
+    reserveprop.style.position = "relative"
+    reserveprop.style.opacity = "1"
+
+    const resTimeprop = spots[reserved].getElementsByClassName("list-propcontainer")[0].getElementsByClassName("res-time-prop")[0]
+    resTimeprop.style.position = "relative"
+    resTimeprop.style.opacity = "1"
+
+    spots[reserved].style.border = "1px solid orange"
+
+    const current = spots[reserved]
+    const currentInt = reserved
+    const interval = setInterval(() => {
+        if (spots[reserved] != current) {
+            clearInterval(interval);
+            reserveprop.style.position = "absolute"
+            reserveprop.style.opacity = "0"
+
+            resTimeprop.style.position = "absolute"
+            resTimeprop.style.opacity = "0"
+
+            if (spotValues[currentInt] == 2) {spotValues[currentInt] = 0}
+            if (spots[reserved] == current) {onMenuAction(reserved, true)}
+            resTimeprop.textContent = "120"
+        }
+        else {
+            resTimeprop.textContent = String(parseInt(resTimeprop.textContent) - 1)
+            if (parseInt(resTimeprop.textContent) < 1) {
+                clearInterval(interval);
+                reserveprop.style.position = "absolute"
+                reserveprop.style.opacity = "0"
+
+                resTimeprop.style.position = "absolute"
+                resTimeprop.style.opacity = "0"
+
+                current.style.border = "0"
+                console.log("hejeiwh")
+                console.log(spotValues[currentInt])
+                if (spotValues[currentInt] == 2) {spotValues[currentInt] = 0}
+                if (spots[reserved] == current) {onMenuAction(reserved, true)}
+                resTimeprop.textContent = "120"
+            }
+        }
+    }, 1000);
+    }
+    else {
+        if (reserved != undefined) {spots[reserved].style.border = "0"}
+        spotValues[reserved] = 0
+        spots[reserved].getElementsByClassName("list-propcontainer")[0].getElementsByClassName("res-time-prop")[0].textContent = "120"
+        reserved = undefined
+    }
+
+    onMenuAction(selected, true)
 })
 
 for (let i = 0; i < spots.length; i++) {
     const spot = spots[i];
 
     spot.addEventListener("click", () => {
-        selected = i
-        selectmenu.style.order = String(spot.style.order)
-        selectmenu.classList.remove("animate-selectmenu")
-        selectmenu.classList.add("animate-selectmenu")
-
-        void selectmenu.offsetWidth;
+        onMenuAction(i)
     });
 
     selectmenu.addEventListener("animationend", () => {
@@ -56,16 +199,33 @@ for (let i = 0; i < spots.length; i++) {
     });
 }
 
+setInterval(() => {
+    for (let i = 0; i < spots.length; i++) {
+        const circle = spots[i].getElementsByClassName("list-statuscircle")[0]
+        circle.style.backgroundColor = colors[parseInt(spotValues[i])]
+
+        const info = spots[i].getElementsByClassName("list-statusinfo")[0]
+        info.textContent = values[spotValues[i]] + ", " + info.textContent.split(",")[1]
+       // info.textContent = info.textContent.replace(values[spotValues[i]], values[parseInt(spotValues[i])])
+    }
+}, 100);
+
 const intromenu = document.getElementById("intro-screen")
 const accepter = document.getElementById("request-accept")
 const requester = document.getElementById("port-requester")
 
 accepter.addEventListener("click", async () => {
+    adminButton.style.pointerEvents = "none"
+    password.style.opacity = "0"
+    password.style.pointerEvents = "none"
+
     intromenu.style.opacity = "0"
     intromenu.style.pointerEvents = "none"
 
     requester.style.display = "none"
     requester.style.pointerEvents = "none"
+
+    if (!isadministrator) {return}
 try {
      // 1. Prompt user to select an Arduino/Serial device
     port = await navigator.serial.requestPort();
@@ -100,12 +260,6 @@ async function readSerialData() {
                     const char = buffer.charAt(i + 1)
 
                     console.log(String(i + 1) + " " + String(char))
-                    const circle = spots[i].getElementsByClassName("list-statuscircle")[0]
-                    circle.style.backgroundColor = colors[parseInt(char)]
-
-                    const info = spots[i].getElementsByClassName("list-statusinfo")[0]
-                    info.textContent = info.textContent.replace(values[spotValues[i]], values[parseInt(char)])
-
                     spotValues[i] = parseInt(char)
                 }
 

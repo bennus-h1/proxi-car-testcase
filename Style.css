@@ -52,6 +52,19 @@ body {
     color: var(--reverse-color);
 }
 
+#admin-button {
+    opacity: 0;
+    position: absolute;
+    height: 100px;
+    width: 100px;
+}
+
+#password {
+    opacity: 0;
+    position: absolute;
+    left: 5%;
+}
+
 #intro-screen {
     position: absolute;
     width: 100%;
@@ -135,15 +148,23 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 
     background-color: var(--mediumheavy-color);
 }
 
 #map {
-    height: 98%;
-    width: 98.5%;
+    width: 98%;
+    height: 98.5%;
 
     border-radius: 20px;
+}
+
+#map-pin {
+    position: absolute;
+    width: 8%;
+    height: 12%;
+    opacity: 0;
 }
 
 #shadow {
@@ -171,8 +192,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    overflow-y: auto;
 }
 
 #list-header {
@@ -213,6 +232,58 @@ body {
 
     cursor: default;
     user-select: none;
+}
+
+.list-propcontainer {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+
+    left: 20%;
+    top: 0%;
+
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 2%;
+
+    pointer-events: none;
+}
+
+.list-property {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: "Google Sans", sans-serif;
+    font-weight: 500;
+    font-size: 0.75em;
+
+    border-radius: 4em;
+    pointer-events: none;
+
+    position: absolute;
+    opacity: 0;
+}
+
+.reserved-prop {
+    height: 9%;
+    width: 14%;
+    padding: 2%;
+
+    background-color: rgba(240, 120, 0, 0.3);
+    border: 1px solid rgb(240, 120, 0);
+    color: rgb(240, 100, 0);
+}
+
+.res-time-prop {
+    height: 9%;
+    width: 5%;
+    padding: 2%;
+
+    background-color: rgba(240, 120, 0, 0.3);
+    border: 1px solid rgb(240, 120, 0);
+    color: rgb(240, 100, 0);
 }
 
 .list-statuscircle {
@@ -266,7 +337,9 @@ body {
 }
 
 #select-menu {
-    position: relative;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
     margin-top: 6px;
     margin-bottom: -4px;
 
@@ -426,8 +499,8 @@ body {
 .title {
     position: absolute;
     transform: translate(-50%, -50%);
-    top: 8%;
-    left: 45%;
+    top: 6%;
+    left: 15%;
 
     cursor: default;
     user-select: none;
@@ -452,4 +525,98 @@ body {
     font-family: "Google Sans", sans-serif;
     font-weight: 500;
     font-size: 0.9em;
+}
+
+#mobiletitle {
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    @keyframes animate-intro-desc {
+        from {bottom: 20%; opacity: 0;}
+        to {bottom: 45%; opacity: 1;}
+    }
+
+    @keyframes animate-intro-desc-r {
+        from {bottom: 45%; opacity: 1;}
+        to {bottom: 20%; opacity: 0;}
+    }
+
+    #list {
+        border-radius: 20px;
+        width: 85%;
+        height: 90%;
+
+        background-color: var(--mediumheavy-color);
+        position: absolute;
+        transform: translate(-50%, 0);
+        left: 50%;
+
+        transition: opacity 0.3s ease-in-out;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #list-header {
+        margin-bottom: 10px;
+    }
+
+    .list-subtext {
+        opacity: 0;
+    }
+
+    #map-container {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    #select-menu {
+        width: 80%;
+        height: 6%;
+    }
+
+    #track-select {
+        opacity: 0;
+        display: none;
+    }
+
+    #reserve-select {
+        width: 43%;
+    }
+
+    #info-select {
+        width: 43%;
+    }
+
+    #reserve-select:hover {
+        width: 46%;
+    }
+
+    #info-select:hover {
+        width: 46%;
+    }
+
+    #reserve-select:focus {
+    width: 46%;
+    }
+
+    #info-select:focus {
+    width: 46%;
+    }
+
+    #port-requester {
+        width: 45%;
+    }
+
+    #mobiletitle {
+        opacity: 1;
+        position: absolute;
+        left: 58%;
+        
+        transform: translate(0, -50%);
+        top: 70%;
+    }
 }

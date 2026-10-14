@@ -1,7 +1,7 @@
 
 <html>
     <head title="Display">
-        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="Style.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,31 +11,38 @@
 
     <body>
         <div id="intro-screen">
+            <button id="admin-button"></button>
+            <input id="password">
             <div class="title" id="intro-title" style="font-size: 5em">ProxiCar</div>
             <div class="desc" id="intro-desc" style="font-size: 1em">very effective parking system</div>
             <div id="port-requester">
-            <p> Hello! In order for us to properly track information, port reading should be allowed. </p>
-            <p> Accept port reader? (Requires connected port!!) </p>
+            <p id="requester-text"> Hello! This is ProxiCar </p>
+            <p id="requester-text2"> Would you like to continue? </p>
             <button id="request-accept">Yes</button>
             </div>
         </div>
-
         <div id="shadow"></div>
 
         <div id="list">
             <div id="list-header">
-                <p class="list-maintext">Vacant Spaces: 3</p>
-                <p class="list-subtext">Systems: all active currently</p>
-                <div id="list-filterbutton">
+                <p class="list-maintext">Town Town</p>
+                <p class="list-subtext" style="opacity: 1;">Systems: all active currently</p>
+                <div id="list-filterbutton" style="display: none;">
                     Filter <img id="list-filterimg" src="Filter.png">
                 </div>
+                <div class="title" id="mobiletitle" style="font-size: 1.8em;">ProxiCar</div>
             </div>
 
             <div class="list-element" style="order: 1;">
                 <p class="list-maintext">Lorem</p>
                 <p class="list-subtext">Space 1</p>
                 <div class="list-statuscircle"></div>
-                <div class="list-statusinfo">Vacant, Row 1 · Column 1 <br> Rate: ₱50/hr</div>
+                <div class="list-statusinfo">Vacant, Row 1 · Column 1 <br> Rate: ₱60/hr</div>
+
+                <div class="list-propcontainer">
+                    <div class="list-property reserved-prop">Reserved</div>
+                    <div class="list-property res-time-prop">10</div>
+                </div>
             </div>
 
             <div class="list-element" style="order: 3;">
@@ -43,13 +50,23 @@
                 <p class="list-subtext">Space 2</p>
                 <div class="list-statuscircle"></div>
                 <div class="list-statusinfo">Vacant, Row 1 · Column 2 <br> Rate: ₱50/hr</div>
+
+                <div class="list-propcontainer">
+                    <div class="list-property reserved-prop">Reserved</div>
+                    <div class="list-property res-time-prop">120</div>
+                </div>
             </div>
 
             <div class="list-element" style="order: 5;">
                 <p class="list-maintext">dolor</p>
                 <p class="list-subtext">Space 3</p>
                 <div class="list-statuscircle"></div>
-                <div class="list-statusinfo">Vacant, Row 1 · Column 3 <br> Rate: ₱50/hr</div>
+                <div class="list-statusinfo">Vacant, Row 1 · Column 3 <br> Rate: ₱60/hr</div>
+
+                <div class="list-propcontainer">
+                    <div class="list-property reserved-prop">Reserved</div>
+                    <div class="list-property res-time-prop">120</div>
+                </div>
             </div>
 
             <div class="list-element" style="order: 7;">
@@ -57,6 +74,11 @@
                 <p class="list-subtext">Space 4</p>
                 <div class="list-statuscircle"></div>
                 <div class="list-statusinfo">Vacant, Row 1 · Column 4 <br> Rate: ₱50/hr</div>
+
+                <div class="list-propcontainer">
+                    <div class="list-property reserved-prop">Reserved</div>
+                    <div class="list-property res-time-prop">120</div>
+                </div>
             </div>
 
             <div id="select-menu">
@@ -66,13 +88,11 @@
             </div>
         </div>
 
-        <div class="title" style="font-size: 2.5em;">ProxiCar</div>
-
         <div id="map-container">
+            <div class="title" style="font-size: 3vw;">ProxiCar</div>
             <img id="map" src="ProxiMap.png">
+            <img id="map-pin" src="MapPin.png">
         </div>
-
-        <div id="list-interact">&gt;</div>
 
         <script src="Main.js"></script>
     </body>
